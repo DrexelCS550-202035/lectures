@@ -16,7 +16,9 @@
 ;;
 
 (define (member? x ys)
-  'not-implemented)
+  (cond [(null? ys)            #f]
+        [(equal? x (first ys)) #t]
+        [else                  (member? x (rest ys))]))
 
 ;; What if we swap the first two conditions?
 ;; What if we use length instead of null?
@@ -29,17 +31,27 @@
 ; Write a function that reverses a list
 ;
 
+;; (append xs ys)
+
 (define (reverse xs)
-  'not-implemented)
+  (if (null? xs)
+      null
+      (append (reverse (rest xs)) (list (first xs)))))
 
 (define (reverse2 xs)
-  'not-implemented)
+  (define (helper xs acc)
+    (if (null? xs)
+        acc
+        (helper (rest xs) (cons (first xs) acc))))
+  (helper xs null))
 
 ;
 ; What about performance?
 ;
 (define (repeat x n)
-  'not-implemented)
+  (if (= n 0)
+      null
+      (cons x (repeat x (- n 1)))))
 
 (define long-list (repeat 1 10000))
 
@@ -54,13 +66,23 @@
 ;
 
 (define (expt b n)
-  'not-implemented)
+  (if (= n 0)
+      1
+      (* b (expt b (- n 1)))))
 
 (define (expt2 b n)
-  'not-implemented)
+  (define (helper b counter product)
+    (if (= counter 0)
+        product
+        (helper b (- counter 1) (* b product))))
+  (helper b n 1))
 
 (define (fast-expt b n)
-  'not-implemented)
+  (cond [(= n 0)   1]
+        [(even? n) (square (fast-expt b (/ n 2)))]
+        [else      (* b (fast-expt b (- n 1)))]))
+
+(define (square x) (* x x))
 
 ;
 ; What about performance?
@@ -77,7 +99,8 @@
     (lambda (x)
       (+ y x))))
 
-(define (procedure-computer y)
-  (define (inc x)
-    (+ y x))
-  inc)
+(define procedure-computer
+  (lambda (y)
+    (define (inc x)
+      (+ y x))
+    inc))
